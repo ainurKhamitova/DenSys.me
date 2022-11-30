@@ -4,7 +4,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
 import LoginPage from "./pages/LoginPage";
 import Home from "./pages/Home";
-
+import Appointment from "./pages/Appointment";
+import DoctorList from "./components/AppointmentComponents/DoctorList";
+import MakeAppointment from "./components/AppointmentComponents/MakeAppointment";
 import AdminPage from "./pages/AdminPage"
 import AdminPageMenu from "./components/AdminComponents/AdminPageMenu";
 import PatientRegistration from "./components/AdminComponents/PatientReg/PatientRegistration";
@@ -13,6 +15,8 @@ import EditPatient from "./components/AdminComponents/PatientReg/EditPatient";
 import Doctors from "./components/AdminComponents/Doctors";
 import EditDoctor from "./components/AdminComponents/DoctorReg/EditDoctor";
 import DoctorRegistration from "./components/AdminComponents/DoctorReg/DoctorRegestration";
+
+
 
 function App(){
 
@@ -24,6 +28,9 @@ function App(){
       <Route path="/" element={<Layout />}>
         <Route index element={<Home />} />
         <Route path="/login" element={<LoginPage state ={setisLoggedIn}  />} />
+        <Route path="/appointment" element={<Appointment />} />
+        <Route path="/doctorList" element={<DoctorList />} />
+        <Route path="/makeAppointment" element={<MakeAppointment />} />
       </Route>
       <Route path="/admin" element={<AdminPageMenu />}>
         <Route index element={<AdminPage isLoggedIn = {isLoggedIn}/>}  />

@@ -4,7 +4,6 @@ import psycopg2 #pip install psycopg2
 import psycopg2.extras
 import json
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
 
 
 
@@ -269,6 +268,43 @@ def delete_doctor(id):
 
     conn.commit()
     return make_response(jsonify({"message":"User deleted successfully"}),201)
+
+
+#######################################################################################
+@app.route('/getDoctor/<category>/<value>')
+def search_doctor(category, value):
+    print(category, value)
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    
+    cur.execute('''SELECT * FROM doctors WHERE "{a}" = '{b}' '''.format( ** {'a':category,'b':value}))
+    data = cur.fetchall()
+    
+    cur.close()
+    return json.dumps([dict(ix) for ix in data], indent=4, sort_keys=True, default=str)
+
+@app.route('/getDoctorBySpec/<value>')
+def search_by_spe(value):
+    print( value)
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    
+    cur.execute('''SELECT * FROM doctors WHERE "specializationId" = '{a}' '''.format( ** {'a':value}))
+    data = cur.fetchall()
+   
+    cur.close()
+    return json.dumps([dict(ix) for ix in data], indent=4, sort_keys=True, default=str)
+
+
+
+
+@app.route('/getSpecialization')
+def get_specialization():
+    print()
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    cur.execute('SELECT DISTINCT "specializationId" FROM doctors GROUP BY "specializationId", raiting')
+    data = cur.fetchall()
+    cur.close()
+    print(data[0])
+    return json.dumps([dict(ix) for ix in data], indent=4, sort_keys=True, default=str)
 
 
 if __name__ == "__main__":

@@ -1,4 +1,4 @@
-import { Outlet, Link } from "react-router-dom";
+import { Outlet} from "react-router-dom";
 
 const Layout = () => {
   return (<>
@@ -14,17 +14,10 @@ const Layout = () => {
           <a class="nav-link active" aria-current="page" href = "/">Home</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href = "/login"> Login</a>
+          <a class="nav-link" href = "/appointment"> Make an Appointment</a>
         </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Dropdown link
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <li><a class="dropdown-item" href="#">Action</a></li>
-            <li><a class="dropdown-item" href="#" >Another action</a></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
-          </ul>
+        <li class="nav-item">
+          <a class="nav-link" href = "/login"> Login</a>
         </li>
       </ul>
     </div>
