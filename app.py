@@ -4,6 +4,8 @@ import psycopg2 #pip install psycopg2
 import psycopg2.extras
 import json
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import relationship
+
 
 
 
@@ -66,6 +68,8 @@ class Doctor(db.Model):
   raiting = db.Column(db.Integer)
   address = db.Column(db.String(40)) 
   homepage = db.Column(db.String(40)) 
+
+  appointments = relationship("Appointment",  backref = "doctors")
   
     
   def __init__(self, doctorId, govid,iin, name, surname, birthdate, contactNo, deptId, specializationId, experience, img, category, price, scheduleDetail, degree, raiting, address, homepage):
@@ -89,8 +93,41 @@ class Doctor(db.Model):
     self.homepage = homepage
 
 
-    
+class Slot(db.Model):
+  __tablename__='slots'
+  slotId = db.Column(db.Integer, primary_key=True)
+  time = db.Column(db.String(40)) 
+#   appointment_id = db.Column(db.Integer, db.ForeignKey("appointment.timeslotId"))
+  appointments = relationship("Appointment",  backref = "slots")
 
+  def __init__(self, slotId, time):
+    self.slotId = slotId 
+    self.time = time
+
+class Appointment(db.Model):
+  __tablename__='appointments'
+  doctorId = db.Column(db.Integer, db.ForeignKey("doctors.doctorId"), primary_key=True)
+  iin = db.Column(db.Integer)
+  name = db.Column(db.Integer)
+  surname = db.Column(db.Integer)
+  dateOfApp = db.Column(db.DateTime, primary_key=True)
+  timeslotId = db.Column(db.Integer, db.ForeignKey("slots.slotId"),primary_key=True)
+  specialization = db.Column(db.String(40)) 
+  email = db.Column(db.String(40)) 
+  contactNo = db.Column(db.String(40)) 
+ 
+
+
+  def __init__(self, doctorId, iin, name, surname, appdate, timeslotId, specialization, email, contactNo):
+    self.doctorId = doctorId
+    self.iin = iin
+    self.name = name
+    self.surname = surname
+    self.dateOfApp = appdate
+    self.timeslotId = timeslotId
+    self.specialization = specialization
+    self.email = email
+    self.contactNo = contactNo
 
 
 
@@ -306,6 +343,80 @@ def get_specialization():
     print(data[0])
     return json.dumps([dict(ix) for ix in data], indent=4, sort_keys=True, default=str)
 
+@app.route('/getTimeSlots/<doctorId>/<dateOfApp>')
+def get_slot(doctorId, dateOfApp):
+    print(doctorId, dateOfApp)
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    timeset=[]
+    cur.execute('''SELECT "timeslotId" FROM appointments WHERE "doctorId" = '{a}' AND "dateOfApp" = '{b}' '''.format(**{'a':doctorId, 'b':dateOfApp}))
+    data = cur.fetchall()
+    print(data)
+    # for i in data:
+    #     timedata = cur.execute("SELECT * FROM Slots WHERE slotId != '{0}'".format(i))
+    #     timeset.append(timedata)
+    # for i in data:
+    #     timedata = cur.execute("SELECT * FROM Slots WHERE slotId NOT IN '{0}'".format(i))
+    #     for t in timedata:
+    #         timeset.append(t)
+    
+    if(len(data) == 0):
+       
+       cur.execute("SELECT * FROM slots ")
+       timedata = cur.fetchall()
+       cur.close()
+       print(timedata)
+    else:
+        dateList = "SELECT * FROM slots WHERE "
+        for i in range(len(data)): 
+            if(i == len(data)-1) :
+               
+               dateList += ' "timeslotsId" != ' + "'" + str(data[i])[1:2] +"'" 
+               break
+            dateList +="slotId = '" + str(data[i])[1:2] +"' AND "
+            
+        print(dateList)
+        
+        cur.execute(dateList)
+        timedata = cur.fetchall()
+        cur.close()
+        print(timedata) 
+        # if (timeset.size()!=0):
+        #     return timeset
+    res = []
+    for date in timedata:
+        res.append({
+            "timeslotId": date[0],
+            "time": date[1]
+        })
+    print(res)
+    return res
+    
 
+
+
+@app.route('/makeAppointment', methods=['POST', 'GET'])
+def add_appointment():
+  
+
+    if request.method == 'POST':
+
+        data=request.get_json()
+        doctorId = data.get('doctorId')
+        name = data.get('name')
+        surname = data.get('surname')
+        dateOfApp = (data.get('dateOfApp'))
+        iin = data.get('iin')
+        contactNo = data.get('contactNo')  
+        specializationId = data.get('specialization')
+        email = data.get('email')
+        timeslotId = data.get('timeslotId')
+
+        
+        appointment = Appointment(doctorId, iin,name, surname, dateOfApp, timeslotId, specializationId, email, contactNo)
+      
+        db.session.add(appointment)
+        db.session.commit()
+       
+        return make_response(jsonify({"message":"User added successfully"}),201)
 if __name__ == "__main__":
     app.run(debug=True)

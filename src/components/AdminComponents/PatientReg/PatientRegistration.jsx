@@ -32,7 +32,6 @@ function PatientRegistration(props){
         },
         body: JSON.stringify(data)
     }
-
     fetch('/admin/patient/add_patient', requestOptions)
         .then(res => res.text())
         .then(text => console.log(text))

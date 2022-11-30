@@ -7,6 +7,8 @@ import Home from "./pages/Home";
 import Appointment from "./pages/Appointment";
 import DoctorList from "./components/AppointmentComponents/DoctorList";
 import MakeAppointment from "./components/AppointmentComponents/MakeAppointment";
+import FindDate from "./components/AppointmentComponents/FindDate";
+
 import AdminPage from "./pages/AdminPage"
 import AdminPageMenu from "./components/AdminComponents/AdminPageMenu";
 import PatientRegistration from "./components/AdminComponents/PatientReg/PatientRegistration";
@@ -30,6 +32,7 @@ function App(){
         <Route path="/login" element={<LoginPage state ={setisLoggedIn}  />} />
         <Route path="/appointment" element={<Appointment />} />
         <Route path="/doctorList" element={<DoctorList />} />
+        <Route path="/findDate" element={<FindDate />} />
         <Route path="/makeAppointment" element={<MakeAppointment />} />
       </Route>
       <Route path="/admin" element={<AdminPageMenu />}>

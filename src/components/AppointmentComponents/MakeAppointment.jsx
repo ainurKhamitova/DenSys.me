@@ -4,21 +4,23 @@ import { useLocation, useNavigate } from "react-router-dom";
 function MakeAppointment(){
     // get userId
 const location = useLocation();
-let userId = location.state.userId;
-let specializationId = location.state.specializationId;
+let user = location.state.user;
+
+let timeslots = location.state.timeslots
+
 
 
  
   const navigate =useNavigate();
 
-  const [data, setData] = useState({
-    doctorId: userId,
+  const [app, setApp] = useState({
+    doctorId: user.doctorId,
     iin : "",
     name: "",
     surname: "",
-    dateOfApp: "", 
+    dateOfApp: user.dateOfApp, 
     timeslotId: "", 
-    specialization: specializationId,
+    specialization: user.specialization,
     email: "",
     contactNo: ""
     
@@ -26,17 +28,43 @@ let specializationId = location.state.specializationId;
 
 
 
+
+
   function handleChange(event) {
     const { name, value } = event.target;
 
-    setData(prevValue => {
+    setApp(prevValue => {
       return {...prevValue,
         [name]: value
       };
     });
+    console.log(app)
   }
   
 
+
+
+  
+  let handleSubmit = async (e) => {
+
+    e.preventDefault();
+  
+    const requestOptions = {
+      method: "POST",
+      headers: {
+          'content-type': 'application/json'
+      },
+      body: JSON.stringify(app)
+  }
+  fetch('/makeAppointment', requestOptions)
+      .then(res => res.text())
+      .then(text => console.log(text))
+      .then(data =>{
+          navigate("/")
+      }).catch(err => console.log(err))
+
+    }
+ 
   return (<section className="vh-200 gradient-custom">
   <div className="container py-5 h-100">
     <div className="row justify-content-center align-items-center h-100">
@@ -51,7 +79,7 @@ let specializationId = location.state.specializationId;
                         <input
                             id="doctorId"
                             type="text"
-                            value={data.doctorId}
+                            value={app.doctorId}
                             name ="doctorId"
                             className="form-control form-control-lg" 
                         />
@@ -63,7 +91,7 @@ let specializationId = location.state.specializationId;
                         <input
                             id="specialization"
                             type="text"
-                            value={data.specialization}
+                            value={app.specialization}
                             name ="specialization"
                             className="form-control form-control-lg"
                         />
@@ -77,9 +105,10 @@ let specializationId = location.state.specializationId;
                             <input
                                 id="dateOfApp"
                                 type="date"
-                                value={data.dateOfApp}
+                                value={app.dateOfApp}
                                 name ="dateOfApp"
-                                className="form-control form-control-lg" sx
+                                className="form-control form-control-lg" 
+                                onChange={handleChange}
                             />
                             <label className="form-label" for="dateOfApp">Date</label>
                         </div>
@@ -88,15 +117,21 @@ let specializationId = location.state.specializationId;
 
               
                 <div class="row">
-                <div className="col-4 mb-4">
-                  <input className="btn btn-primary btn-lg" type="submit" value="Find timeslot" />
-                </div>
-                    <div class="col-8 mb-4">
-                    <select class="select form-control-lg">
-                        <option value="1" disabled>Choose Slot</option>
-                        <option value="2">Subject 1</option>
-                        <option value="3">Subject 2</option>
-                        <option value="4">Subject 3</option>
+                
+                    <div class="col-12 mb-4">
+                    <select class="select form-control-lg" value={app.timeslotId} name ="timeslotId" onChange={handleChange}>
+                    
+                        <option value="0">Choose Slot</option>
+                        {timeslots.map((option, index) => (
+                          
+                          <option key={option.timeslotId} value={option.timeslotId}>
+                            {option.timeslotId} - {option.time}
+                          </option>)
+                          
+                          )
+                          
+                          }
+                        
                     </select>
                     <label class="form-label select-label">Choose slot</label>
                     </div>
@@ -108,7 +143,7 @@ let specializationId = location.state.specializationId;
                       <input
                         id="iin"
                         type="text"
-                        value={data.iin}
+                        value={app.iin}
                         name ="iin"
                         className="form-control form-control-lg" 
                         onChange={handleChange}
@@ -121,7 +156,7 @@ let specializationId = location.state.specializationId;
                       <input
                         id="name"
                         type="text"
-                        value={data.name}
+                        value={app.name}
                         name ="name"
                         className="form-control form-control-lg" 
                         onChange={handleChange}
@@ -135,7 +170,7 @@ let specializationId = location.state.specializationId;
                       <input
                         id="surname"
                         type="text"
-                        value={data.surname}
+                        value={app.surname}
                         name ="surname"
                         className="form-control form-control-lg" 
                         onChange={handleChange}
@@ -151,7 +186,7 @@ let specializationId = location.state.specializationId;
                       <input
                         id="contactNo"
                         type="text"
-                        value={data.contactNo}
+                        value={app.contactNo}
                         name ="contactNo"
                         className="form-control form-control-lg" 
                         onChange={handleChange}
@@ -164,7 +199,7 @@ let specializationId = location.state.specializationId;
                       <input
                         id="email"
                         type="text"
-                        value={data.email}
+                        value={app.email}
                         name = "email"
                         className="form-control form-control-lg" 
                         onChange={handleChange}
@@ -174,7 +209,7 @@ let specializationId = location.state.specializationId;
                   </div>
                 </div>
                 <div className="mt-4 pt-2">
-                  <input className="btn btn-primary btn-lg" type="submit" value="Submit" />
+                  <input className="btn btn-primary btn-lg" type="submit" value="Submit" onClick={handleSubmit} />
                 </div>
               </form>
              </div>

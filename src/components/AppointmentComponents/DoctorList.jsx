@@ -9,10 +9,12 @@ function DoctorList(){
     console.log(user);
     const navigate =useNavigate();
   
+    
     function handleClick(id, specializationId){
-        navigate("/makeAppointment", {      state: {
+        navigate("/findDate", {      state: {
             userId: id,
-            specializationId: specializationId
+            specializationId: specializationId,
+
           }})
        }
 
