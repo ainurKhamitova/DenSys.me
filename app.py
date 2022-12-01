@@ -372,7 +372,7 @@ def get_slot(doctorId, dateOfApp):
                
                dateList += ' "timeslotsId" != ' + "'" + str(data[i])[1:2] +"'" 
                break
-            dateList +="slotId = '" + str(data[i])[1:2] +"' AND "
+            dateList +=' "timeslotsId" != '  + "'"  + str(data[i])[1:2] +"' AND "
             
         print(dateList)
         
