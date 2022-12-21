@@ -6,6 +6,7 @@ const AdminPageMenu = () => {
   <nav className="navbar navbar-expand-lg navbar-light bg-light">
   <div className="container-fluid">
     <a className="navbar-brand" href = "#">Menu</a>
+    <hr/>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -26,6 +27,7 @@ const AdminPageMenu = () => {
       </ul>
     </div>
   </div>
+ 
   </nav>
   <Outlet />
     </>

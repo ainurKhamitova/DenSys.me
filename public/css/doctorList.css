@@ -1,10 +1,10 @@
 .gradient-custom {
     /* fallback for old browsers */
-    background: #f6d365;
-    
-    /* Chrome 10-25, Safari 5.1-6 */
-    background: -webkit-linear-gradient(to right bottom, rgba(246, 211, 101, 1), rgba(253, 160, 133, 1));
-    
-    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-    background: linear-gradient(to right bottom, rgba(246, 211, 101, 1), rgba(253, 160, 133, 1))
+    background:hsl(180, 26%, 59%);
+  
+  /* Chrome 10-25, Safari 5.1-6 */
+  background: -webkit-linear-gradient(to right, hsl(180, 32%, 63%), hsl(180, 26%, 59%), hsl(180, 21%, 43%), hsl(180, 26%, 35%));
+  
+  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: linear-gradient(to right, hsl(180, 32%, 63%), hsl(180, 26%, 59%), hsl(180, 21%, 43%), hsl(180, 26%, 35%));
     }

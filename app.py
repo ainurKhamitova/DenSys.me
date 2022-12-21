@@ -6,17 +6,60 @@ import json
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
 
-
-
-
-
-app = Flask(__name__, template_folder='template', static_folder='static')
-app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:12345@localhost/sampledb'
-conn = psycopg2.connect(database="sampledb", user="postgres", password="12345", host="127.0.0.1", port="5432")
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:12345@127.0.0.1/newdb'
+conn = psycopg2.connect(database="newdb", user="postgres", password="12345", host="127.0.0.1", port="5432")
 cursor = conn.cursor()
 db=SQLAlchemy(app)
  
- 
+class Department(db.Model):
+  __tablename__='departments'
+  deptId = db.Column(db.Integer, primary_key=True)
+  deptName = db.Column(db.Integer)
+
+  services = relationship("Service",  backref = "departments")
+  doctors = relationship("Doctor",  backref = "departments") 
+  specializations = relationship("Specialization",  backref = "departments")
+
+  def __init__(self,deptId, deptName):
+    self.deptId = deptId
+    self.deptname = deptName
+
+class Specialization(db.Model):
+  __tablename__='specializations'
+  specialization = db.Column(db.String, primary_key=True)
+  deptId = db.Column(db.Integer, db.ForeignKey("departments.deptId"))
+
+  doctors = relationship("Doctor",  backref = "specializations")
+    
+  def __init__(self, specialization, deptId):
+    self.specialization = specialization
+    self.deptId = deptId
+
+class Service(db.Model):
+  __tablename__='services'
+  serviceId = db.Column(db.String, primary_key=True)
+  deptId = db.Column(db.Integer, db.ForeignKey("departments.deptId"))
+  contradictionId = db.Column(db.String)
+  price = db.Column(db.Integer)
+
+    
+  def __init__(self,deptId, serviceId, contradictionId, price):
+    self.serviceId = serviceId
+    self.deptId = deptId
+    self.contradictionId = contradictionId
+    self.price = price
+
+class Drug(db.Model):
+  __tablename__='drugs'
+  drugId = db.Column(db.String, primary_key=True)
+  contradictionId = db.Column(db.String)
+  price = db.Column(db.Integer)
+
+  def __init__(self, drugId, contradictionId, price):
+    self.drugId = drugId
+    self.contradictionId = contradictionId
+    self.price = price 
 
 class Patient(db.Model):
   __tablename__='patients'
@@ -31,12 +74,13 @@ class Patient(db.Model):
   email=db.Column(db.String(40))
   address=db.Column(db.String(40))
   maritalStatus=db.Column(db.String(40))
-  regestrationDate=db.Column(db.DateTime)
+  registrationDate=db.Column(db.DateTime)
+  password=db.Column(db.String(40))
     
-  def __init__(self,govid,iin, name, surname, birthdate, bloodgroup, emergcontact, contactnum, email, address, maritalstatus,regdate):
+  def __init__(self,govId,iin, name, surname, birthdate, bloodgroup, emergcontact, contactnum, email, address, maritalstatus,regdate, password):
     self.dateOfBirth=birthdate
     self.iin=iin
-    self.govId=govid
+    self.govId=govId
     self.name = name
     self.surname = surname
     self.bloodType=bloodgroup
@@ -45,7 +89,8 @@ class Patient(db.Model):
     self.email=email
     self.address=address
     self.maritalStatus=maritalstatus
-    self.regestrationDate=regdate
+    self.registrationDate=regdate
+    self.password = password
 
 class Doctor(db.Model):
   __tablename__='doctors'
@@ -57,8 +102,8 @@ class Doctor(db.Model):
   name = db.Column(db.String(40))
   surname = db.Column(db.String(40))
   contactNo = db.Column(db.Integer)
-  deptId = db.Column(db.String(40))
-  specializationId = db.Column(db.String(40))
+  deptId = db.Column(db.Integer, db.ForeignKey("departments.deptId"))
+  specializationId = db.Column(db.String(40), db.ForeignKey("specializations.specialization"))
   experience = db.Column(db.Integer)
   img = db.Column(db.String(40))    
   category = db.Column(db.String(40)) 
@@ -68,11 +113,11 @@ class Doctor(db.Model):
   raiting = db.Column(db.Integer)
   address = db.Column(db.String(40)) 
   homepage = db.Column(db.String(40)) 
+  password = db.Column(db.String(40))
 
   appointments = relationship("Appointment",  backref = "doctors")
-  
-    
-  def __init__(self, doctorId, govid,iin, name, surname, birthdate, contactNo, deptId, specializationId, experience, img, category, price, scheduleDetail, degree, raiting, address, homepage):
+ 
+  def __init__(self, doctorId, govid,iin, name, surname, birthdate, contactNo, deptId, specializationId, experience, img, category, price, scheduleDetail, degree, raiting, address, homepage, password):
     self.doctorId = doctorId
     self.iin=iin
     self.govId=govid
@@ -91,13 +136,12 @@ class Doctor(db.Model):
     self.raiting = raiting
     self.address = address
     self.homepage = homepage
-
+    self.password = password
 
 class Slot(db.Model):
   __tablename__='slots'
   slotId = db.Column(db.Integer, primary_key=True)
   time = db.Column(db.String(40)) 
-#   appointment_id = db.Column(db.Integer, db.ForeignKey("appointment.timeslotId"))
   appointments = relationship("Appointment",  backref = "slots")
 
   def __init__(self, slotId, time):
@@ -114,9 +158,7 @@ class Appointment(db.Model):
   timeslotId = db.Column(db.Integer, db.ForeignKey("slots.slotId"),primary_key=True)
   specialization = db.Column(db.String(40)) 
   email = db.Column(db.String(40)) 
-  contactNo = db.Column(db.String(40)) 
- 
-
+  contactNo = db.Column(db.Integer)
 
   def __init__(self, doctorId, iin, name, surname, appdate, timeslotId, specialization, email, contactNo):
     self.doctorId = doctorId
@@ -144,8 +186,6 @@ def get_patientdata():
       
 @app.route('/admin/patient/add_patient', methods=['POST', 'GET'])
 def add_patient():
-  
-
     if request.method == 'POST':
 
         data=request.get_json()
@@ -161,11 +201,12 @@ def add_patient():
         emergencyNo = (data.get('emergencyNo'))
         iin = (data.get('iin'))
         maritalStatus = data.get('maritalStatus')
-        regestrationDate =data.get('regestrationDate')
+        registrationDate =data.get('registrationDate')
+        password = data.get('password')
         
-         
-        pt=Patient( govId, iin, name, surname, dateOfBirth, bloodType, emergencyNo,contactNo,email, address, maritalStatus, regestrationDate)
+        pt=Patient( govId, iin, name, surname, dateOfBirth, bloodType, emergencyNo,contactNo,email, address, maritalStatus, registrationDate, password)
         db.session.add(pt)
+        print(db.session.add(pt))
         db.session.commit()
        
         return make_response(jsonify({"message":"User added successfully"}),201)
@@ -198,12 +239,11 @@ def update_patient(id):
         pt.surname = data.get('surname')
         pt.iin = data.get('iin')
         pt.maritalStatus = data.get('maritalStatus')
+        pt.password = data.get('password')
         db.session.commit()
          
-
         return make_response(jsonify({"message":"User updated successfully"}),201)
  
-
 @app.route('/admin/patient/deletePatient/<string:id>', methods = ['DELETE'])
 def delete_patient(id):
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
@@ -214,22 +254,29 @@ def delete_patient(id):
 
 @app.route('/admin/doctor/doctorData')
 def get_doctordata():
-    # Returning an api for showing in  reactjs
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     s = "SELECT * FROM doctors"
-    cur.execute(s) # Execute the SQL
+    cur.execute(s) 
     list_users = cur.fetchall()
     
     return json.dumps([dict(ix) for ix in list_users], indent=4, sort_keys=True, default=str)
     
 
+@app.route('/services')
+def get_services():
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    s = '''SELECT * FROM services s NATURAL JOIN departments d '''
+    cur.execute(s) 
+    list_users = cur.fetchall()
+    
+    return json.dumps([dict(ix) for ix in list_users], indent=4, sort_keys=True, default=str)
+
 @app.route('/admin/doctor/add_doctor', methods=['POST', 'GET'])
 def add_doctor():
-  
-
     if request.method == 'POST':
 
         data=request.get_json()
+        print(data)
         doctorId = data.get('doctorId')
         name = data.get('name')
         surname = data.get('surname')
@@ -246,10 +293,10 @@ def add_doctor():
         price = data.get('price')
         scheduleDetail = data.get('scheduleDetail')
         degree = data.get('degree')
-        raiting = data.get('raiting')
+        rating = data.get('raiting')
         homepage = data.get('homepage')
-        
-        doc = Doctor(doctorId, govId,iin, name, surname, dateOfBirth, contactNo, deptId, specializationId, experience, img, category, price, scheduleDetail, degree, raiting, address, homepage)
+        password = data.get('password')
+        doc = Doctor(doctorId, govId,iin, name, surname, dateOfBirth, contactNo, deptId, specializationId, experience, img, category, price, scheduleDetail, degree, rating, address, homepage, password)
       
         db.session.add(doc)
         db.session.commit()
@@ -273,6 +320,7 @@ def update_doctor(id):
     if request.method == 'POST':
         doc= Doctor.query.filter_by(doctorId=int(id)).first()
         data=request.get_json()
+        print(data)
         doc.doctorId = data.get('doctorId')
         doc.name = data.get('name')
         doc.surname = data.get('surname')
@@ -291,10 +339,9 @@ def update_doctor(id):
         doc.degree = data.get('degree')
         doc.raiting = data.get('raiting')
         doc.homepage = data.get('homepage')
-        
+        doc.password = data.get('password')
         db.session.commit()
-         
-
+        
         return make_response(jsonify({"message":"User updated successfully"}),201)
  
 
@@ -312,10 +359,12 @@ def delete_doctor(id):
 def search_doctor(category, value):
     print(category, value)
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    
-    cur.execute('''SELECT * FROM doctors WHERE "{a}" = '{b}' '''.format( ** {'a':category,'b':value}))
-    data = cur.fetchall()
-    
+    if category=="name" or category == "specializationId":
+        cur.execute('''SELECT * FROM doctors WHERE "{a}" = '{b}' '''.format( ** {'a':category,'b':value}))
+        data = cur.fetchall()
+    if category=="serviceId":
+        cur.execute('''SELECT * FROM doctors WHERE "deptId"= (SELECT "deptId" from services where "{a}" = '{b}') '''.format( ** {'a':category,'b':value}))
+        data = cur.fetchall()
     cur.close()
     return json.dumps([dict(ix) for ix in data], indent=4, sort_keys=True, default=str)
 
@@ -331,16 +380,26 @@ def search_by_spe(value):
     return json.dumps([dict(ix) for ix in data], indent=4, sort_keys=True, default=str)
 
 
-
-
 @app.route('/getSpecialization')
 def get_specialization():
     print()
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    cur.execute('SELECT DISTINCT "specializationId" FROM doctors GROUP BY "specializationId", raiting')
+    cur.execute('SELECT DISTINCT "specializationId" FROM doctors')
     data = cur.fetchall()
     cur.close()
     print(data[0])
+    return json.dumps([dict(ix) for ix in data], indent=4, sort_keys=True, default=str)
+
+@app.route('/getProcedure')
+def get_procedure():
+    print()
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    cur.execute('''SELECT "serviceId" from services where "deptId" in (Select distinct "deptId" from doctors)''')
+    
+    data = cur.fetchall()
+    cur.close()
+    
+    print(data)
     return json.dumps([dict(ix) for ix in data], indent=4, sort_keys=True, default=str)
 
 @app.route('/getTimeSlots/<doctorId>/<dateOfApp>')
@@ -351,13 +410,6 @@ def get_slot(doctorId, dateOfApp):
     cur.execute('''SELECT "timeslotId" FROM appointments WHERE "doctorId" = '{a}' AND "dateOfApp" = '{b}' '''.format(**{'a':doctorId, 'b':dateOfApp}))
     data = cur.fetchall()
     print(data)
-    # for i in data:
-    #     timedata = cur.execute("SELECT * FROM Slots WHERE slotId != '{0}'".format(i))
-    #     timeset.append(timedata)
-    # for i in data:
-    #     timedata = cur.execute("SELECT * FROM Slots WHERE slotId NOT IN '{0}'".format(i))
-    #     for t in timedata:
-    #         timeset.append(t)
     
     if(len(data) == 0):
        
@@ -370,9 +422,9 @@ def get_slot(doctorId, dateOfApp):
         for i in range(len(data)): 
             if(i == len(data)-1) :
                
-               dateList += ' "timeslotsId" != ' + "'" + str(data[i])[1:2] +"'" 
+               dateList += ' "slotId" != ' + "'" + str(data[i])[1:2] +"'" 
                break
-            dateList +=' "timeslotsId" != '  + "'"  + str(data[i])[1:2] +"' AND "
+            dateList +=' "slotId" != '  + "'"  + str(data[i])[1:2] +"' AND "
             
         print(dateList)
         
@@ -380,8 +432,7 @@ def get_slot(doctorId, dateOfApp):
         timedata = cur.fetchall()
         cur.close()
         print(timedata) 
-        # if (timeset.size()!=0):
-        #     return timeset
+
     res = []
     for date in timedata:
         res.append({
@@ -392,14 +443,9 @@ def get_slot(doctorId, dateOfApp):
     return res
     
 
-
-
 @app.route('/makeAppointment', methods=['POST', 'GET'])
 def add_appointment():
-  
-
     if request.method == 'POST':
-
         data=request.get_json()
         doctorId = data.get('doctorId')
         name = data.get('name')
@@ -410,13 +456,18 @@ def add_appointment():
         specializationId = data.get('specialization')
         email = data.get('email')
         timeslotId = data.get('timeslotId')
-
-        
+       
         appointment = Appointment(doctorId, iin,name, surname, dateOfApp, timeslotId, specializationId, email, contactNo)
       
         db.session.add(appointment)
         db.session.commit()
        
         return make_response(jsonify({"message":"User added successfully"}),201)
+
+
+
+
 if __name__ == "__main__":
     app.run(debug=True)
+
+    

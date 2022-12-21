@@ -58,14 +58,14 @@ function DoctorTable(){
    function handleDelete(id){
 
     console.log(id);
-    fetch('/admin/doctor/deletePatient/'+id, {
+    fetch('/admin/doctor/deleteDoctor/'+id, {
         method: 'DELETE',
         header: {
            'Accept' : 'application/json',
            'Content-Type' : 'application/json',
           }
         })
-    setdata(data.filter(record=>record.iin !== id))
+    setdata(data.filter(record=>record.doctorId !== id))
    }
  
     return ( <div>
@@ -117,8 +117,8 @@ function DoctorTable(){
                   <td>{item.address}</td>
                   <td>{item.homepage}</td>
                     <td> 
-                        <button type="button" onClick = {()=>{handleEdit(item.doctorId)}} className="btn btn-success tableButton{">Edit</button>
-                        <button onClick = {()=>{handleDelete(item.doctorId)}} className="btn btn-danger tableButton{">Delete</button>
+                        <button type="button" onClick = {()=>{handleEdit(item.doctorId)}} className="buttonADD">Edit</button>
+                        <button onClick = {()=>{handleDelete(item.doctorId)}} className="buttonDELETE">Delete</button>
                     </td>
                  </tr>
              ))}

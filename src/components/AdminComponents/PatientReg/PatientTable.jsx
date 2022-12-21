@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
 
 function PatientTable(){
 
@@ -98,10 +98,10 @@ function PatientTable(){
                   <td>{item.email}</td>
                   <td>{item.address}</td>
                   <td>{item.maritalStatus}</td>
-                  <td>{item.regestrationDate}</td>
+                  <td>{item.registrationDate}</td>
                     <td> 
-                        <button type="button" onClick = {()=>{handleEdit(item.iin)}} className="btn btn-success tableButton{">Edit</button>
-                        <button onClick = {()=>{handleDelete(item.iin)}} className="btn btn-danger tableButton{">Delete</button>
+                        <button type="button" onClick = {()=>{handleEdit(item.iin)}} className="buttonADD">Edit</button>
+                        <button onClick = {()=>{handleDelete(item.iin)}} className="buttonDELETE">Delete</button>
                     </td>
                  </tr>
              ))}

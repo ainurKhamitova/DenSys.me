@@ -8,6 +8,8 @@ import Appointment from "./pages/Appointment";
 import DoctorList from "./components/AppointmentComponents/DoctorList";
 import MakeAppointment from "./components/AppointmentComponents/MakeAppointment";
 import FindDate from "./components/AppointmentComponents/FindDate";
+import Services from "./pages/Services";
+import DoctorPage from "./pages/DoctorPage";
 
 import AdminPage from "./pages/AdminPage"
 import AdminPageMenu from "./components/AdminComponents/AdminPageMenu";
@@ -19,7 +21,7 @@ import EditDoctor from "./components/AdminComponents/DoctorReg/EditDoctor";
 import DoctorRegistration from "./components/AdminComponents/DoctorReg/DoctorRegestration";
 
 
-
+import PatientPage from "./pages/PatientPage";
 function App(){
 
   const [isLoggedIn, setisLoggedIn] = useState(null);
@@ -34,6 +36,10 @@ function App(){
         <Route path="/doctorList" element={<DoctorList />} />
         <Route path="/findDate" element={<FindDate />} />
         <Route path="/makeAppointment" element={<MakeAppointment />} />
+        <Route path="/patient" element={<PatientPage />} />
+        <Route path="/patient" element={<PatientPage />} />
+        <Route path="/doctor" element={<DoctorPage />} />
+        <Route path="/services" element={<Services />} />
       </Route>
       <Route path="/admin" element={<AdminPageMenu />}>
         <Route index element={<AdminPage isLoggedIn = {isLoggedIn}/>}  />

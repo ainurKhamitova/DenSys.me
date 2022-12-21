@@ -17,11 +17,15 @@ const Layout = () => {
           <a class="nav-link" href = "/appointment"> Make an Appointment</a>
         </li>
         <li class="nav-item">
+          <a class="nav-link" href = "/services"> List of services</a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link" href = "/login"> Login</a>
         </li>
       </ul>
     </div>
   </div>
+  <hr/>
   </nav>
   <Outlet />
     </>

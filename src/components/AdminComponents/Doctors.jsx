@@ -7,7 +7,7 @@ function Doctors(){
     function handleClick(){
         navigate("/admin/doctor/doctorRegisteration")
     }
-    return <div> <button onClick = {handleClick}>Add Doctor</button>
+    return <div> <button className="buttonADD" onClick = {handleClick}>Add Doctor</button>
     <DoctorTable />
 </div>
 }

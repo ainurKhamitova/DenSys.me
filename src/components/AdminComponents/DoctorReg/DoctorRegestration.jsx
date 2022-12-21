@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -8,6 +9,7 @@ function DoctorRegistration(props){
     doctorId : "",
     iin : "",
     dateOfBirth: "",
+    password: "",
     govID: "",
     name: "",
     surname: "",
@@ -25,13 +27,26 @@ function DoctorRegistration(props){
     homepage: ""
   })
 
+  const [file, setFile] = useState();
+
+  function handleChangeFile(e) {
   
-
-    let handleSubmit = async (e) => {
-
-      e.preventDefault();
     
-      const requestOptions = {
+    console.log(e.target.files[0])
+    setData(prevValue => {
+      return {...prevValue,
+        ["img"]: (e.target.files[0]).name
+      };
+    });
+    console.log(data)
+  }
+
+
+  let handleSubmit = async (e) => {
+
+    e.preventDefault();
+    
+    const requestOptions = {
         method: "POST",
         headers: {
             'content-type': 'application/json'
@@ -46,21 +61,27 @@ function DoctorRegistration(props){
             navigate("/admin/doctor")
         }).catch(err => console.log(err))
 
-      }
+  }
    
 
-    function handleChange(event) {
+  function handleChange(event) {
       const { name, value } = event.target;
- 
+      if(name === 'iin'){
+        setData(prevValue => {
+          return {...prevValue,
+            [name]: value,
+            ["password"]: value
+          };
+        });
+      }
       setData(prevValue => {
         return {...prevValue,
           [name]: value
         };
       });
-
-    }
+  }
   
-    return (<section className="vh-200 gradient-custom">
+  return (<section className="vh-200 gradient-custom">
     <div className="container py-5 h-100">
       <div className="row justify-content-center align-items-center h-100">
         <div className="col-12 col-lg-9 col-xl-7">
@@ -69,7 +90,7 @@ function DoctorRegistration(props){
               <h3 className="mb-4 pb-2 pb-md-0 mb-md-5">Registration Form</h3>
                 <form onSubmit={handleSubmit}>
                   <div className="row">
-                  <div className="col-md-6 mb-4">
+                  <div className="col-md-4 mb-4">
                       <div class="form-outline">
                         <input
                           id="doctorId"
@@ -82,7 +103,7 @@ function DoctorRegistration(props){
                         <label className="form-label" for="doctorId">Doctor Id</label>
                       </div>
                     </div>
-                    <div className="col-md-6 mb-4">
+                    <div className="col-md-4 mb-4">
                       <div class="form-outline">
                         <input
                           id="iin"
@@ -95,7 +116,20 @@ function DoctorRegistration(props){
                         <label className="form-label" for="iin">IIN</label>
                       </div>
                     </div>
-                
+                    </div>
+                    <div className="row">
+                    <div className="col-md-6 mb-4">
+                      <div class="form-outline">
+                        <input
+                          id="password"
+                          type="text"
+                          value={data.iin}
+                          name ="password"
+                          className="form-control form-control-lg" 
+                        />
+                        <label className="form-label" for="password">Password</label>
+                      </div>
+                    </div>
                     <div class="col-md-6 mb-4">
                       <div class="form-outline">
                         <input
@@ -215,12 +249,12 @@ function DoctorRegistration(props){
                     <div class="col-md-6 mb-4">
                       <div class="form-outline">
                         <input
+                          accept="image/*"
                           id="img"
-                          type="text"
-                          value={data.img}
+                          type="file"
                           name ="img"
                           className="form-control form-control-lg" 
-                          onChange={handleChange}
+                          onChange={handleChangeFile}
                         />
                         <label className="form-label" for="img">Image</label>
                       </div>
@@ -330,7 +364,7 @@ function DoctorRegistration(props){
                   </div>
     
                   <div className="mt-4 pt-2">
-                    <input className="btn btn-primary btn-lg" type="submit" value="Submit" />
+                    <input className="buttonADD" type="submit" value="Submit" />
                   </div>
                 </form>
                </div>
@@ -339,7 +373,7 @@ function DoctorRegistration(props){
         </div>
       </div>
     </section>
-    );
-  }
+  );
+}
   
-  export default DoctorRegistration;
+export default DoctorRegistration;

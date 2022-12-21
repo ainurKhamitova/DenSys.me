@@ -9,7 +9,20 @@ function EditDoctor(props){
 
   // get userId
   let id =location.state.userId;
+
+  const [file, setFile] = useState();
+
+  function handleChangeFile(e) {
   
+    
+    console.log(e.target.files[0])
+    setData(prevValue => {
+      return {...prevValue,
+        ["img"]: (e.target.files[0]).name
+      };
+    });
+    console.log(data)
+  }
    
   // Using useEffect for single rendering
   useEffect(() => {
@@ -56,6 +69,7 @@ function handleChange(event) {
       [name]: value
     };
   });
+  console.log(data)
 
 }
 
@@ -68,10 +82,10 @@ return (<section className="vh-200 gradient-custom">
     <div className="col-12 col-lg-9 col-xl-7">
       <div className="card shadow-2-strong card-registration">
         <div className="card-body p-4 p-md-5">
-          <h3 className="mb-4 pb-2 pb-md-0 mb-md-5">Registration Form</h3>
+          <h3 className="mb-4 pb-2 pb-md-0 mb-md-5">Edit Form</h3>
             <form onSubmit={handleSubmit}>
               <div className="row">
-              <div className="col-md-6 mb-4">
+              <div className="col-md-4 mb-4">
                   <div class="form-outline">
                     <input
                       id="doctorId"
@@ -84,7 +98,7 @@ return (<section className="vh-200 gradient-custom">
                     <label className="form-label" for="doctorId">Doctor Id</label>
                   </div>
                 </div>
-                <div className="col-md-6 mb-4">
+                <div className="col-md-4 mb-4">
                   <div class="form-outline">
                     <input
                       id="iin"
@@ -97,7 +111,19 @@ return (<section className="vh-200 gradient-custom">
                     <label className="form-label" for="iin">IIN</label>
                   </div>
                 </div>
-            
+                <div className="col-md-4 mb-4">
+                  <div class="form-outline">
+                    <input
+                      id="password"
+                      type="password"
+                      value={data.password}
+                      name ="password"
+                      className="form-control form-control-lg" 
+                      onChange={handleChange}
+                    />
+                    <label className="form-label" for="password">Password</label>
+                  </div>
+                </div>
                 <div class="col-md-6 mb-4">
                   <div class="form-outline">
                     <input
@@ -218,11 +244,10 @@ return (<section className="vh-200 gradient-custom">
                   <div class="form-outline">
                     <input
                       id="img"
-                      type="text"
-                      value={data.img}
+                      type="file"
                       name ="img"
                       className="form-control form-control-lg" 
-                      onChange={handleChange}
+                      onChange={handleChangeFile}
                     />
                     <label className="form-label" for="img">Image</label>
                   </div>
@@ -332,7 +357,7 @@ return (<section className="vh-200 gradient-custom">
               </div>
 
               <div className="mt-4 pt-2">
-                <input className="btn btn-primary btn-lg" type="submit" value="Submit" />
+                <input className="buttonADD" type="submit" value="Submit" />
               </div>
             </form>
            </div>

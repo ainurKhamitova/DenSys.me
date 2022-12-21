@@ -16,7 +16,8 @@ function PatientRegistration(props){
     email: "",
     address: "",
     maritalStatus: "",
-    regestrationDate: new Date().toISOString().slice(0, 10),  
+    registrationDate: new Date().toISOString().slice(0, 10),  
+    password: ""
   })
 
   
@@ -44,7 +45,14 @@ function PatientRegistration(props){
 
     function handleChange(event) {
       const { name, value } = event.target;
- 
+      if(name === 'iin'){
+        setData(prevValue => {
+          return {...prevValue,
+            [name]: value,
+            ["password"]: value
+          };
+        });
+      }
       setData(prevValue => {
         return {...prevValue,
           [name]: value
@@ -62,7 +70,7 @@ function PatientRegistration(props){
               <h3 className="mb-4 pb-2 pb-md-0 mb-md-5">Registration Form</h3>
                 <form onSubmit={handleSubmit}>
                   <div className="row">
-                    <div className="col-md-6 mb-4">
+                    <div className="col-md-4 mb-4">
 
                       <div class="form-outline">
                         <input
@@ -77,7 +85,7 @@ function PatientRegistration(props){
                       </div>
                     </div>
                 
-                    <div class="col-md-6 mb-4">
+                    <div class="col-md-4 mb-4">
 
                       <div class="form-outline">
                         <input
@@ -89,6 +97,21 @@ function PatientRegistration(props){
                           onChange={handleChange}
                         />
                         <label className="form-label" for="govId">Gov ID</label>
+                      </div>
+                    </div>
+
+                    <div className="col-md-4 mb-4">
+
+                      <div class="form-outline">
+                        <input
+                          id="password"
+                          type="text"
+                          value={data.iin}
+                          name ="password"
+                          className="form-control form-control-lg" 
+      
+                        />
+                        <label className="form-label" for="password">Password</label>
                       </div>
                     </div>
                   </div>
@@ -228,18 +251,18 @@ function PatientRegistration(props){
                         <input
                           id="regDate"
                           type="text"
-                          value={data.regestrationDate}
-                          name ="regestrationDate"
+                          value={data.registrationDate}
+                          name ="registrationDate"
                           className="form-control form-control-lg" 
                           onChange={handleChange}
                         />
-                        <label className="form-label" for="regDate">Regestration Date</label>
+                        <label className="form-label" for="regDate">Registration Date</label>
                       </div>
                     </div>
                   </div>
 
                   <div className="mt-4 pt-2">
-                    <input className="btn btn-primary btn-lg" type="submit" value="Submit" />
+                    <input className="buttonADD" type="submit" value="Submit" />
                   </div>
                 </form>
                </div>

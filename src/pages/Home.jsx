@@ -1,6 +1,11 @@
-import React from "react";
-const Home = () => {
-    return <h1>Home</h1>;
-  };
-  
-  export default Home;
+
+import React  from "react";
+import HomeLayout from "../components/HomeLayout";
+
+
+function Home(){
+  return <div> 
+  <HomeLayout />
+</div>
+}
+export default Home;

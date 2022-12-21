@@ -13,7 +13,7 @@ function LoginPage(props){
                                      <div className="card-body p-md-5 mx-md-4">
                                         <div className="text-center">
                                             <img className = "logoimg" src = {require('../images/lotus.jpeg')} />
-                                            <h4 className="mt-1 mb-5 pb-1">Hospital</h4>
+                                            <h4 className="mt-1 mb-5 pb-1">DenSys.me</h4>
                                         </div>
                                          <LoginForm state = {props.state}/>
                                     </div>

@@ -41,8 +41,6 @@ function FindDate(){
         }
     }
         )
-    
-        
         
         )
 
@@ -97,7 +95,7 @@ function FindDate(){
                       </div>
                   </div>
                   <div className="mt-4 pt-2">
-                    <input className="btn btn-primary btn-lg" type="submit" value="Submit" onClick={handleSubmit} />
+                    <input className="buttonADD" type="submit" value="Submit" onClick={handleSubmit} />
                   </div>
                 </form>
                </div>
